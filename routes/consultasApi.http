@@ -1,0 +1,26 @@
+# Recupera todos las detecciones
+GET http://127.0.0.1:8000/api/detections
+
+# Inserta un deteccion
+POST http://127.0.0.1:8000/api/detections/add
+Content-Type: application/json
+
+{
+    "detections":
+    [
+        {
+            "id_tracking": "aajdkdk",
+            "clase": "car",
+            "fecha": "2023-05-20 13:56"
+        }, {
+            "id_tracking": "xxjdkdk",
+            "clase": "truck",
+            "fecha": "2023-05-20 13:57"
+        }, {
+            "id_tracking": "zzjdkdk",
+            "clase": "car",
+            "fecha": "2023-05-20 13:58"
+        }
+    ]
+}
+
