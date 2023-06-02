@@ -8,5 +8,6 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::post('detections/get', [DetectionController::class, 'getBetweenDates']);
+Route::post('detections/getByDate', [DetectionController::class, 'getByDate']);
+Route::post('detections/getBetweenDates', [DetectionController::class, 'getBetweenDates']);
 Route::post('detections/add', [DetectionController::class, 'store']);
