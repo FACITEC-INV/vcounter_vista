@@ -45,7 +45,6 @@ async function validaFechas(){
 }
 
 async function getData(){
-    console.log("click")
     const fdesde = conf.fdesde.format('YYYY-MM-DD');
     const fhasta = conf.fhasta.format('YYYY-MM-DD');
     try {

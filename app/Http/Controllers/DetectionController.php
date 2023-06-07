@@ -58,43 +58,57 @@ class DetectionController extends Controller
   public function getBetweenDates(Request $req)
   {
     try {
-        if ($req->input('vista') == 'DIA') {
-// select strftime('%d', fecha) as dia, strftime('%m', fecha) as mes, count(*) as cant
-// from detections
-// where fecha between '2023-05-01' and '2023-05-10'
-// group by mes, dia;
-            $detections = Detection::select(
-                DB::raw("strftime('%d', fecha) as dia, strftime('%m', fecha) as mes, count(*) as cant"))
-                ->whereBetween('fecha', [$req->input('desde'), $req->input('hasta')])
-                ->groupBy('mes', 'dia')
-                ->get();
-        } elseif ($req->input('vista') == 'MES'){
-// select strftime('%m', fecha) as mes, strftime('%Y', fecha) as anho, count(*) as cant
-// from detections
-// group by mes;
-                // TODO: Adecuar a consulta por mes
-            $detections = Detection::select(
-                DB::raw("strftime('%d', fecha) as dia, strftime('%m', fecha) as mes, count(*) as cant"))
-                ->whereBetween('fecha', [$req->input('desde'), $req->input('hasta')])
-                ->groupBy('mes', 'dia')
-                ->get();
-        } else {
-// select strftime('%Y', fecha) as anho, count(*) as cant
-// from detections
-// group by anho;
-                // TODO: Adecuar a consulta por anho
-            $detections = Detection::select(
-                DB::raw("strftime('%d', fecha) as dia, strftime('%m', fecha) as mes, count(*) as cant"))
-                ->whereBetween('fecha', [$req->input('desde'), $req->input('hasta')])
-                ->groupBy('mes', 'dia')
-                ->get();
-        }
-
         $data = [];
-        foreach($detections as $detection){
-            $mesIndex = intval($detection['mes'])-1;
-            $dia = $this->meses[$mesIndex]. ' ' . $detection['dia'];
-            $data[]=['label' => $dia, 'cant' => $detection['cant']];
+
+        if ($req->input('vista') == 'DIA') {
+            // select strftime('%d', fecha) as dia, strftime('%m', fecha) as mes, count(*) as cant
+            // from detections
+            // where fecha between '2023-05-01' and '2023-05-10'
+            // group by mes, dia;
+            $detections = Detection::select(
+                DB::raw("strftime('%d', fecha) as dia, strftime('%m', fecha) as mes, count(*) as cant"))
+                ->whereBetween('fecha', [$req->input('desde'), $req->input('hasta')])
+                ->groupBy('mes', 'dia')
+                ->get();
+
+            foreach($detections as $detection){
+                $mesIndex = intval($detection['mes'])-1;
+                $label = $this->meses[$mesIndex]. ' ' . $detection['dia'];
+                $data[]=['label' => $label, 'cant' => $detection['cant']];
+            }
+
+        } elseif ($req->input('vista') == 'MES'){
+            // select strftime('%m', fecha) as mes, strftime('%Y', fecha) as anho, count(*) as cant
+            // from detections
+            // group by mes;
+            $detections = Detection::select(
+                DB::raw("strftime('%m', fecha) as mes, strftime('%Y', fecha) as anho, count(*) as cant"))
+                ->whereBetween('fecha', [$req->input('desde'), $req->input('hasta')])
+                ->groupBy('anho', 'mes')
+                ->get();
+
+            foreach($detections as $detection){
+                $mesIndex = intval($detection['mes'])-1;
+                $label = $this->meses[$mesIndex]. ' ' . $detection['anho'];
+                $data[]=['label' => $label, 'cant' => $detection['cant']];
+            }
+
+        } else {
+            // select strftime('%Y', fecha) as anho, count(*) as cant
+            // from detections
+            // group by anho;
+            error_log($req->input('vista'));
+            $detections = Detection::select(
+                DB::raw("strftime('%Y', fecha) as anho, count(*) as cant"))
+                ->whereBetween('fecha', [$req->input('desde'), $req->input('hasta')])
+                ->groupBy('anho')
+                ->get();
+
+            foreach($detections as $detection){
+                $label = $detection['anho'];
+                $data[]=['label' => $label, 'cant' => $detection['cant']];
+            }
+
         }
 
         return response()->json([
