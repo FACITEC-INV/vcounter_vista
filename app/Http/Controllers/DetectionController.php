@@ -13,28 +13,37 @@ class DetectionController extends Controller
             'JULIO', 'AGOSTO', 'SETIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE'];
     /**
    * Devuelve el recuento por fecha.
-   * @param {date: date(Y-m-d)}
-   * @return json [
-   *                {carsDia: int, trucksDia: int},
-   *                {carsMes: int, trucksMes: int},
-   *                {carsAnho: int, trucksAnho: int},
-   *                {mesLetras: string},
-   *            ]
+   * @param {date: date(Y-m-d H:M:S)}
+   * @return json { ok: boolean, data: {
+   *                   vehicDia: int, vehicMes: int, vehicAnho: int,
+   *                    mes: string, dia: string, anho: int,
+   *                }
+   *            }
    */
     public function getByDate(Request $req)
     {
-        $diasLetras = ['DOMINGO', 'LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO'];
-        error_log($req->input('date'));
-        $fecha = Carbon::createFromDate($req->input('date'));
+        // INFO: Para ver todos los parametros en consola del server
+        // error_log(json_encode($req->all()));
 
+        // INFO: Usar $req->json('...') para probar desde herramietas como insomnia
+
+        $diasLetras = ['DOMINGO', 'LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO'];
+        $fecha = Carbon::createFromDate($req->json('date'));
         try {
             $data = [
-                "carsDia" => Detection::where('clase', 'car')->whereDate('fecha', $fecha->toDateString())->count(),
-                "trucksDia" => Detection::where('clase', 'truck')->whereDate('fecha', $fecha->toDateString())->count(),
-                "carsMes" => Detection::where('clase', 'car')->whereMonth('fecha', $fecha->month)->count(),
-                "trucksMes" => Detection::where('clase', 'truck')->whereMonth('fecha', $fecha->month) ->count(),
-                "carsAnho" => Detection::where('clase', 'car') ->whereYear('fecha', $fecha->year) ->count(),
-                "trucksAnho" => Detection::where('clase', 'truck') ->whereYear('fecha', $fecha->year) ->count(),
+                // INFO: Se comenta por el modelo de detección implementado no clasifica los vehículos
+                // "carsDia" => Detection::where('clase', 'car')->whereDate('fecha', $fecha->toDateString())->count(),
+                // "trucksDia" => Detection::where('clase', 'truck')->whereDate('fecha', $fecha->toDateString())->count(),
+                // "carsMes" => Detection::where('clase', 'car')->whereMonth('fecha', $fecha->month)->count(),
+                // "trucksMes" => Detection::where('clase', 'truck')->whereMonth('fecha', $fecha->month) ->count(),
+                // "carsAnho" => Detection::where('clase', 'car') ->whereYear('fecha', $fecha->year) ->count(),
+                // "trucksAnho" => Detection::where('clase', 'truck') ->whereYear('fecha', $fecha->year) ->count(),
+                // HACK: consulta para sqlite: select count(*) from detections where date(fecha) = date('Y-m-d');
+                "vehicDia" => Detection::whereDate('fecha', $fecha->toDateString())->count(),
+                // HACK: consulta para sqlite: select count(*) from detections where strftime('%m',fecha) = strftime('%m','Y-m-d');
+                "vehicMes" => Detection::whereMonth('fecha', $fecha->month)->count(),
+                // HACK: consulta para sqlite: select count(*) from detections where strftime('%Y',fecha) = strftime('%Y','Y-m-d');;
+                "vehicAnho" => Detection::whereYear('fecha', $fecha->year) ->count(),
                 "mes" => $this->meses[$fecha->month - 1],
                 "dia" => $diasLetras[$fecha->dayOfWeek] . ' ' . $fecha->day,
                 "anho" => $fecha->year,
@@ -52,15 +61,19 @@ class DetectionController extends Controller
     }
 
   /**
-   * Cantidad de cars y trucks entre dos fechas.
-   * @param Request {desde: date('Y-m-d'), hasta: date('Y-m-d')}
+   * Devuelve la cantidad de cars y trucks entre dos fechas.
+   * @param Request {desde: date('Y-m-d'), hasta: date('Y-m-d'), vista: string}
+   * @return
    */
   public function getBetweenDates(Request $req)
   {
+    // INFO: Para ver todos los parametros en consola del server
+    // error_log(json_encode($req->all()));
     try {
         $data = [];
 
         if ($req->input('vista') == 'DIA') {
+            // HACK: consulta para sqlite
             // select strftime('%d', fecha) as dia, strftime('%m', fecha) as mes, count(*) as cant
             // from detections
             // where fecha between '2023-05-01' and '2023-05-10'
@@ -78,6 +91,7 @@ class DetectionController extends Controller
             }
 
         } elseif ($req->input('vista') == 'MES'){
+            // HACK: consulta para sqlite
             // select strftime('%m', fecha) as mes, strftime('%Y', fecha) as anho, count(*) as cant
             // from detections
             // group by mes;
@@ -94,6 +108,7 @@ class DetectionController extends Controller
             }
 
         } else {
+            // HACK: consulta para sqlite
             // select strftime('%Y', fecha) as anho, count(*) as cant
             // from detections
             // group by anho;
@@ -125,13 +140,13 @@ class DetectionController extends Controller
 
   /**
    * Guarda un registro.
-   * @param Request [{id_tracking: string,  clase: string, fecha: date('Y-m-d')},...]
+   * @param Request [{id_zona: string,  clase: string, fecha: date('Y-m-d')},...]
    */
   public function store(Request $request)
   {
     $reglas = [
       'detections' => 'present|array',
-      'detections.*.id_tracking' => 'required|string',
+      'detections.*.id_zona' => 'required|string',
       'detections.*.clase' => 'required|string',
     ];
 

@@ -31,12 +31,8 @@
                             <hr>
                             <div class="card-text">
                                 <h6>
-                                    <small class="text-body-secondary">Automóviles:</small>
-                                    <span id="span-carsDia"></span>
-                                </h6>
-                                <h6>
-                                    <small class="text-body-secondary">Camiones:</small>
-                                    <span id="span-trucksDia"></span>
+                                    <small class="text-body-secondary">Vehículos:</small>
+                                    <span id="span-vehicDia"></span>
                                 </h6>
                             </div>
                         </div>
@@ -54,12 +50,8 @@
                             <hr>
                             <div class="card-text">
                                 <h6>
-                                    <small class="text-body-secondary">Automóviles:</small>
-                                    <span id="span-carsMes"></span>
-                                </h6>
-                                <h6>
-                                    <small class="text-body-secondary">Camiones:</small>
-                                    <span id="span-trucksMes"></span>
+                                    <small class="text-body-secondary">Vehículos:</small>
+                                    <span id="span-vehicMes"></span>
                                 </h6>
                             </div>
                         </div>
@@ -77,12 +69,8 @@
                         <hr>
                         <div class="card-text">
                             <h5>
-                                <small class="text-body-secondary">Automóviles:</small>
-                                <span id="span-carsAnho"></span>
-                            </h5>
-                            <h5>
-                                <small class="text-body-secondary">Camiones:</small>
-                                <span id="span-trucksAnho"></span>
+                                <small class="text-body-secondary">Vehículos:</small>
+                                <span id="span-vehicAnho"></span>
                             </h5>
                         </div>
                     </div>
@@ -133,8 +121,6 @@
 
 
     </div>
-
-
 
     <script src="{{url('/js/chart_js_v4.3.0.js')}}"></script>
     <script src="{{url('/js/dayjs_v1.11.7.js')}}"></script>

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('detections', function (Blueprint $table) {
             $table->id();
-            $table->text('id_tracking');
+            $table->text('id_zona');
             $table->text('clase')->index();
             $table->timestamp('fecha')->index();
         });

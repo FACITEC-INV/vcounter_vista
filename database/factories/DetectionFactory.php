@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class DetectionFactory extends Factory
 {
     /** Fecha random */
-    private function randDate($init = '2023-04-01', $end = '2023-05-31') {
+    private function randDate($init = '2020-01-01', $end = '2023-12-31') {
         $minTime = strtotime($init);
         $maxTime = strtotime($end);
         $randTime = rand($minTime, $maxTime);
@@ -24,8 +24,9 @@ class DetectionFactory extends Factory
     public function definition(): array
     {
         $opciones = ['car', 'truck'];
+        $zonas = ['mapy', 'centro'];
         return [
-            'id_tracking' => $this->faker->sha1,
+            'id_zona' => $zonas[array_rand($zonas)],
             'clase' => $opciones[array_rand($opciones)],
             'fecha' => $this->randDate(),
         ];

@@ -12,7 +12,7 @@ class Detection extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'id_tracking',
+        'id_zona',
         'clase',
         'fecha'
     ];
