@@ -18,47 +18,44 @@
                             id="inp-date" />
                     </div>
                 </div>
-            <div class="row">
-                <div class="col">
-                    <div class="shadow bg-body-tertiary rounded mt-2">
-                        <div class="card-body">
-                            <div class="card-title h6">
-                                <small
-                                    class="text-body-secondary"
-                                    style="font-size: 12px;">Día: </small>
-                                <span id="span-dia"></span>
-                            </div>
-                            <hr>
-                            <div class="card-text">
-                                <h6>
-                                    <small class="text-body-secondary">Vehículos:</small>
-                                    <span id="span-vehicDia"></span>
-                                </h6>
-                            </div>
+
+                <div class="shadow bg-body-tertiary rounded mt-2">
+                    <div class="card-body">
+                        <div class="card-title h6">
+                            <small
+                                class="text-body-secondary"
+                                style="font-size: 12px;">Día: </small>
+                            <span id="span-dia"></span>
+                        </div>
+                        <hr>
+                        <div class="card-text">
+                            <h6>
+                                <small class="text-body-secondary">Vehículos:</small>
+                                <span id="span-vehicDia"></span>
+                            </h6>
                         </div>
                     </div>
                 </div>
-                <div class="col">
-                    <div class="shadow bg-body-tertiary rounded mt-2">
-                        <div class="card-body">
-                            <div class="card-title h6">
-                                <small
-                                    class="text-body-secondary"
-                                    style="font-size: 12px;">Mes: </small>
-                                <span id="span-mes"></span>
-                            </div>
-                            <hr>
-                            <div class="card-text">
-                                <h6>
-                                    <small class="text-body-secondary">Vehículos:</small>
-                                    <span id="span-vehicMes"></span>
-                                </h6>
-                            </div>
+
+                <div class="shadow bg-body-tertiary rounded mt-2">
+                    <div class="card-body">
+                        <div class="card-title h6">
+                            <small
+                                class="text-body-secondary"
+                                style="font-size: 12px;">Mes: </small>
+                            <span id="span-mes"></span>
+                        </div>
+                        <hr>
+                        <div class="card-text">
+                            <h6>
+                                <small class="text-body-secondary">Vehículos:</small>
+                                <span id="span-vehicMes"></span>
+                            </h6>
                         </div>
                     </div>
                 </div>
-            </div>
-                <div class="shadow bg-body-tertiary rounded mt-5">
+
+                <div class="shadow bg-body-tertiary rounded mt-2">
                     <div class="card-body">
                         <div class="card-title h6">
                             <small
@@ -68,10 +65,10 @@
                         </div>
                         <hr>
                         <div class="card-text">
-                            <h5>
+                            <h6>
                                 <small class="text-body-secondary">Vehículos:</small>
                                 <span id="span-vehicAnho"></span>
-                            </h5>
+                            </h6>
                         </div>
                     </div>
                 </div>
