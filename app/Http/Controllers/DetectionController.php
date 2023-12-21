@@ -22,16 +22,14 @@ class DetectionController extends Controller
    */
     public function getByDate(Request $req)
     {
-        // INFO: Para ver todos los parametros en consola del server
+        // NOTE: Para ver todos los parametros en consola del server
         // error_log(json_encode($req->all()));
-
-        // INFO: Usar $req->json('...') para probar desde herramietas como insomnia
 
         $diasLetras = ['DOMINGO', 'LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO'];
         $fecha = Carbon::createFromDate($req->json('date'));
         try {
             $data = [
-                // INFO: Se comenta por el modelo de detección implementado no clasifica los vehículos
+                // NOTE: Se comenta por el modelo de detección implementado no clasifica los vehículos
                 // "carsDia" => Detection::where('clase', 'car')->whereDate('fecha', $fecha->toDateString())->count(),
                 // "trucksDia" => Detection::where('clase', 'truck')->whereDate('fecha', $fecha->toDateString())->count(),
                 // "carsMes" => Detection::where('clase', 'car')->whereMonth('fecha', $fecha->month)->count(),
@@ -63,11 +61,11 @@ class DetectionController extends Controller
   /**
    * Devuelve la cantidad de cars y trucks entre dos fechas.
    * @param Request {desde: date('Y-m-d'), hasta: date('Y-m-d'), vista: string}
-   * @return
+   * @return json { ok: boolean, data: Array() }
    */
   public function getBetweenDates(Request $req)
   {
-    // INFO: Para ver todos los parametros en consola del server
+    // NOTE: Para ver todos los parametros en consola del server
     // error_log(json_encode($req->all()));
     try {
         $data = [];
@@ -141,6 +139,7 @@ class DetectionController extends Controller
   /**
    * Guarda un registro.
    * @param Request [{id_zona: string,  clase: string, fecha: date('Y-m-d')},...]
+   * @return json { ok: boolean, msg: string }
    */
   public function store(Request $request)
   {
