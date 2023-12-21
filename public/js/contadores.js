@@ -1,13 +1,10 @@
 const inDate = document.getElementById('inp-date');
 const sDia = document.getElementById('span-dia');
-const sCarsDia = document.getElementById('span-carsDia');
-const sTrucksDia = document.getElementById('span-trucksDia');
+const sVehicDia = document.getElementById('span-vehicDia');
 const sMes = document.getElementById('span-mes');
-const sCarsMes = document.getElementById('span-carsMes');
-const sTrucksMes = document.getElementById('span-trucksMes');
+const sVehicMes = document.getElementById('span-vehicMes');
 const sAnho = document.getElementById('span-anho');
-const sCarsAnho = document.getElementById('span-carsAnho');
-const sTrucksAnho = document.getElementById('span-trucksAnho');
+const sVehicAnho = document.getElementById('span-vehicAnho');
 
 inDate.value = dayjs().format('YYYY-MM-DD');
 
@@ -21,26 +18,27 @@ async function getData(){
             body: JSON.stringify({date: dayjs(inDate.value).format('YYYY-MM-DD')})
         });
         const dat = await res.json();
+        console.log(dat);
         if(!dat.ok){
             throw new Error('Error al recuperar los datos')
-            } else {
+        } else {
+            console.log('else')
             show(dat.data);
         }
     } catch (err) {
+        console.log('catch')
        console.error(err);
     }
 }
 
 function show(dat){
+    console.log('show')
     sDia.textContent = dat.dia;
     sMes.textContent = dat.mes;
     sAnho.textContent = dat.anho;
-    sCarsDia.textContent = dat.carsDia;
-    sCarsMes.textContent = dat.carsMes;
-    sCarsAnho.textContent = dat.carsAnho;
-    sTrucksDia.textContent = dat.trucksDia;
-    sTrucksMes.textContent = dat.trucksMes;
-    sTrucksAnho.textContent = dat.trucksAnho;
+    sVehicDia.textContent = dat.vehicDia;
+    sVehicMes.textContent = dat.vehicMes;
+    sVehicAnho.textContent = dat.vehicAnho;
 }
 
 getData();
