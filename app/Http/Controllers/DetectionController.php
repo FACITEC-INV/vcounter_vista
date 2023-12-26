@@ -11,15 +11,38 @@ class DetectionController extends Controller
 {
     private $meses = ['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO',
             'JULIO', 'AGOSTO', 'SETIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE'];
+    
     /**
-   * Devuelve el recuento por fecha.
-   * @param {date: date(Y-m-d H:M:S)}
-   * @return json { ok: boolean, data: {
-   *                   vehicDia: int, vehicMes: int, vehicAnho: int,
-   *                    mes: string, dia: string, anho: int,
-   *                }
-   *            }
-   */
+     * Controller para devolución de detecciones por fechas.
+     * Utiliza middlewares para realizar validaciones del token y las fechas
+     * @param request header 'API-Token' sha256
+     * @param recuest json {desde: date('Y-m-d'), hasta: date('Y-m-d')}
+     * @return json { ok: boolean, [msg|data]: [string|json] }
+     */
+    public function detectiosByDates(Request $req)
+    {
+
+      $desde = Carbon::createFromDate($req->json('desde'));
+      $hasta = Carbon::createFromDate($req->json('hasta'));
+
+      $detections = Detection::select(
+        DB::raw("*"))
+        ->whereBetween('fecha', [$desde, $hasta])
+        ->get();
+
+      return response()->json([
+        'ok' => true,
+        'consulta' => ['desde' => $desde, 'hasta' => $hasta],
+        'cantidad' => count($detections),
+        'datos' => $detections
+      ], 200);
+    }
+
+    /**
+     * Devuelve el recuento por fecha.
+     * @param recuest json {date: date(Y-m-d H:M:S)}
+     * @return json { ok: boolean, [msg|data]: [string|json] }
+     */
     public function getByDate(Request $req)
     {
         // NOTE: Para ver todos los parametros en consola del server
@@ -60,8 +83,8 @@ class DetectionController extends Controller
 
   /**
    * Devuelve la cantidad de cars y trucks entre dos fechas.
-   * @param Request {desde: date('Y-m-d'), hasta: date('Y-m-d'), vista: string}
-   * @return json { ok: boolean, data: Array() }
+   * @param Request json {desde: date('Y-m-d'), hasta: date('Y-m-d'), vista: string}
+   * @return json { ok: boolean, [msg|data]: [string|Array()] }
    */
   public function getBetweenDates(Request $req)
   {
@@ -138,7 +161,7 @@ class DetectionController extends Controller
 
   /**
    * Guarda un registro.
-   * @param Request [{id_zona: string,  clase: string, fecha: date('Y-m-d')},...]
+   * @param Request json [{id_zona: string,  clase: string, fecha: date('Y-m-d')},...]
    * @return json { ok: boolean, msg: string }
    */
   public function store(Request $request)
