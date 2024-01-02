@@ -1,5 +1,6 @@
 # personal
 *.sqlite
+*.rest
 
 
 /.phpunit.cache

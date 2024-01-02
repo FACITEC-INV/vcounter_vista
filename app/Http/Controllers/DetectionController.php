@@ -13,6 +13,27 @@ class DetectionController extends Controller
             'JULIO', 'AGOSTO', 'SETIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE'];
     
     /**
+     * Devuelve la fehca y hora de la última inserción.
+     * Se usa para comprobar el último envío desde la cámara
+     * @return json { ok: boolean, msg: string }
+     */
+    public function getLastTransaction(Request $req)
+    {
+        try {
+            $data = Detection::latest('fecha')->first();
+            return response()->json([
+                'ok' => true,
+                'fecha' => $data->fecha,
+            ], 200);
+        } catch (\Throwable $err) {
+            return response()->json([
+                'ok' => false,
+                'msg' => $err->getMessage(),
+            ], 400);
+        }
+    }
+
+    /**
      * Controller para devolución de detecciones por fechas.
      * Utiliza middlewares para realizar validaciones del token y las fechas
      * @param request header 'API-Token' sha256
@@ -76,7 +97,7 @@ class DetectionController extends Controller
         } catch (\Throwable $err) {
             return response()->json([
                 'ok' => false,
-                'msg' => $err,
+                'msg' => $err->getMessage(),
             ], 400);
         }
     }
@@ -154,7 +175,7 @@ class DetectionController extends Controller
     } catch (\Throwable $err) {
         return response()->json([
             'ok' => false,
-            'msg' => $err,
+            'msg' => $err->getMessage(),
         ], 400);
     }
   }
@@ -190,7 +211,7 @@ class DetectionController extends Controller
     } catch (\Throwable $err) {
       return response()->json([
         'ok' => false,
-        'msg' => 'No se pudieron guardar los datos ' . $err,
+        'msg' => 'No se pudieron guardar los datos ' . $err->getMessage(),
       ], 400);
     }
   }

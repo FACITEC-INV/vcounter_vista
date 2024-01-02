@@ -15,3 +15,4 @@ Route::post(
   'detections/detectionsByDates', 
   [DetectionController::class, 'detectiosByDates']
 )->middleware(['validaToken', 'validaFechas']);
+Route::post('detections/getLastTransaction', [DetectionController::class, 'getLastTransaction']);
