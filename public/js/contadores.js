@@ -12,27 +12,23 @@ inDate.addEventListener('change', getData)
 
 async function getData(){
     try {
-        const res = await fetch('http://127.0.0.1:8000/api/detections/getByDate',{
+        const res = await fetch('https://appmapy.facitec.edu.py/api/detections/getByDate',{
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({date: dayjs(inDate.value).format('YYYY-MM-DD')})
         });
         const dat = await res.json();
-        console.log(dat);
         if(!dat.ok){
             throw new Error('Error al recuperar los datos')
         } else {
-            console.log('else')
             show(dat.data);
         }
     } catch (err) {
-        console.log('catch')
        console.error(err);
     }
 }
 
 function show(dat){
-    console.log('show')
     sDia.textContent = dat.dia;
     sMes.textContent = dat.mes;
     sAnho.textContent = dat.anho;

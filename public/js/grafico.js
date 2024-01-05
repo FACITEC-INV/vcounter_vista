@@ -48,7 +48,7 @@ async function getData(){
     const fdesde = conf.fdesde.format('YYYY-MM-DD');
     const fhasta = conf.fhasta.format('YYYY-MM-DD');
     try {
-        const res = await fetch('http://127.0.0.1:8000/api/detections/getBetweenDates',{
+        const res = await fetch('https://appmapy.facitec.edu.py/api/detections/getBetweenDates',{
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({desde: fdesde, hasta: fhasta, vista: conf.vista})
