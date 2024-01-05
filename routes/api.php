@@ -8,11 +8,14 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::post('detections/add', [DetectionController::class, 'store']);
-Route::post('detections/getByDate', [DetectionController::class, 'getByDate']);
-Route::post('detections/getBetweenDates', [DetectionController::class, 'getBetweenDates']);
-Route::post(
-  'detections/detectionsByDates', 
-  [DetectionController::class, 'detectiosByDates']
-)->middleware(['validaToken', 'validaFechas']);
-Route::post('detections/getLastTransaction', [DetectionController::class, 'getLastTransaction']);
+Route::middleware(['cors'])->group(function () {
+  Route::post('detections/add', [DetectionController::class, 'store']);
+  Route::post('detections/getByDate', [DetectionController::class, 'getByDate']);
+  Route::post('detections/getBetweenDates', [DetectionController::class, 'getBetweenDates']);
+  Route::post(
+    'detections/detectionsByDates', 
+    [DetectionController::class, 'detectiosByDates']
+  )->middleware(['validaToken', 'validaFechas']);
+  Route::post('detections/getLastTransaction', [DetectionController::class, 'getLastTransaction']);
+});
+

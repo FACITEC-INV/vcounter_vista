@@ -16,7 +16,7 @@ class ValidaToken
     public function handle(Request $req, Closure $next): Response
     {
         // NOTE: Valida header
-        if (!$req->hasHeader('API-Token')) {
+        if (!$req->hasHeader('X-Auth-Token')) {
             return response()->json([
                 'ok' => false,
                 'msg' => 'Falta token',
@@ -24,7 +24,7 @@ class ValidaToken
         }
 
         $apiKey = env('API_KEY');
-        $token = $req->header('Api-Token');
+        $token = $req->header('X-Auth-Token');
         // NOTE: Valida token
         if (!($token == $apiKey)) {
             return response()->json([
