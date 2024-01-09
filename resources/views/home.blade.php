@@ -118,6 +118,10 @@
 
 
     </div>
+    <script>
+      const URLBASE = 'https://appmapy.facitec.edu.py/api/detections/getBetweenDates';
+      /* const URLBASE = 'http://localhost:8000/'; */
+    </script>
 
     <script src="{{url('/js/chart_js_v4.3.0.js')}}"></script>
     <script src="{{url('/js/dayjs_v1.11.7.js')}}"></script>

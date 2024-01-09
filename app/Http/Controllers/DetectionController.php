@@ -112,71 +112,72 @@ class DetectionController extends Controller
     // NOTE: Para ver todos los parametros en consola del server
     // error_log(json_encode($req->all()));
     try {
-        $data = [];
+      $data = [];
 
-        if ($req->input('vista') == 'DIA') {
-            // HACK: consulta para sqlite
-            // select strftime('%d', fecha) as dia, strftime('%m', fecha) as mes, count(*) as cant
-            // from detections
-            // where fecha between '2023-05-01' and '2023-05-10'
-            // group by mes, dia;
-            $detections = Detection::select(
-                DB::raw("strftime('%d', fecha) as dia, strftime('%m', fecha) as mes, count(*) as cant"))
-                ->whereBetween('fecha', [$req->input('desde'), $req->input('hasta')])
-                ->groupBy('mes', 'dia')
-                ->get();
+      if ($req->input('vista') == 'DIA') {
+        // HACK: consulta para sqlite
+        // select strftime('%d', fecha) as dia, strftime('%m', fecha) as mes, strftime('%Y', fecha) as anho, count(*) as cant
+        // from detections
+        // where fecha between '2023-12-09' and '2024-01-10'
+        // group by anho, mes, dia;
+        $detections = Detection::select(
+          DB::raw("strftime('%d', fecha) as dia, strftime('%m', fecha) as mes, strftime('%Y', fecha) as anho, count(*) as cant"))
+          ->whereBetween('fecha', [$req->input('desde'), $req->input('hasta')])
+          ->groupBy('anho','mes', 'dia')
+          ->get();
 
-            foreach($detections as $detection){
-                $mesIndex = intval($detection['mes'])-1;
-                $label = $this->meses[$mesIndex]. ' ' . $detection['dia'];
-                $data[]=['label' => $label, 'cant' => $detection['cant']];
-            }
-
-        } elseif ($req->input('vista') == 'MES'){
-            // HACK: consulta para sqlite
-            // select strftime('%m', fecha) as mes, strftime('%Y', fecha) as anho, count(*) as cant
-            // from detections
-            // group by mes;
-            $detections = Detection::select(
-                DB::raw("strftime('%m', fecha) as mes, strftime('%Y', fecha) as anho, count(*) as cant"))
-                ->whereBetween('fecha', [$req->input('desde'), $req->input('hasta')])
-                ->groupBy('anho', 'mes')
-                ->get();
-
-            foreach($detections as $detection){
-                $mesIndex = intval($detection['mes'])-1;
-                $label = $this->meses[$mesIndex]. ' ' . $detection['anho'];
-                $data[]=['label' => $label, 'cant' => $detection['cant']];
-            }
-
-        } else {
-            // HACK: consulta para sqlite
-            // select strftime('%Y', fecha) as anho, count(*) as cant
-            // from detections
-            // group by anho;
-            error_log($req->input('vista'));
-            $detections = Detection::select(
-                DB::raw("strftime('%Y', fecha) as anho, count(*) as cant"))
-                ->whereBetween('fecha', [$req->input('desde'), $req->input('hasta')])
-                ->groupBy('anho')
-                ->get();
-
-            foreach($detections as $detection){
-                $label = $detection['anho'];
-                $data[]=['label' => $label, 'cant' => $detection['cant']];
-            }
-
+        foreach($detections as $detection){
+          $mesIndex = intval($detection['mes'])-1;
+          // HACK: substr extra las tres primeras letras del mes
+          $label = $detection['dia'] . ' ' . substr($this->meses[$mesIndex],0,3) . ' ' . $detection['anho'];
+          $data[]=['label' => $label, 'cant' => $detection['cant']];
         }
 
-        return response()->json([
-            'ok' => true,
-            'data' => $data,
-        ], 200);
+      } elseif ($req->input('vista') == 'MES'){
+        // HACK: consulta para sqlite
+        // select strftime('%m', fecha) as mes, strftime('%Y', fecha) as anho, count(*) as cant
+        // from detections
+        // group by mes;
+        $detections = Detection::select(
+          DB::raw("strftime('%m', fecha) as mes, strftime('%Y', fecha) as anho, count(*) as cant"))
+          ->whereBetween('fecha', [$req->input('desde'), $req->input('hasta')])
+          ->groupBy('anho', 'mes')
+          ->get();
+
+        foreach($detections as $detection){
+            $mesIndex = intval($detection['mes'])-1;
+            $label = $this->meses[$mesIndex]. ' ' . $detection['anho'];
+            $data[]=['label' => $label, 'cant' => $detection['cant']];
+        }
+
+      } else {
+        // HACK: consulta para sqlite
+        // select strftime('%Y', fecha) as anho, count(*) as cant
+        // from detections
+        // group by anho;
+        error_log($req->input('vista'));
+        $detections = Detection::select(
+          DB::raw("strftime('%Y', fecha) as anho, count(*) as cant"))
+          ->whereBetween('fecha', [$req->input('desde'), $req->input('hasta')])
+          ->groupBy('anho')
+          ->get();
+
+        foreach($detections as $detection){
+            $label = $detection['anho'];
+            $data[]=['label' => $label, 'cant' => $detection['cant']];
+        }
+
+      }
+
+      return response()->json([
+        'ok' => true,
+        'data' => $data,
+      ], 200);
     } catch (\Throwable $err) {
-        return response()->json([
-            'ok' => false,
-            'msg' => $err->getMessage(),
-        ], 400);
+      return response()->json([
+        'ok' => false,
+        'msg' => $err->getMessage(),
+      ], 400);
     }
   }
 
