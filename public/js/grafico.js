@@ -68,7 +68,6 @@ async function getData(){
 
 async function loadData(){
   const {data, vista} = conf;
-  debugger;
   chart.data.labels = data.map(i => i.label);
   chart.data.datasets[0] = {
     data: data.map(i=>i.cant),
