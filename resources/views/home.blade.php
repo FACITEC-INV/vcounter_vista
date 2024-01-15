@@ -119,7 +119,7 @@
 
     </div>
     <script>
-      const URLBASE = 'https://appmapy.facitec.edu.py/api/detections/getBetweenDates';
+      const URLBASE = 'https://appmapy.facitec.edu.py/';
       /* const URLBASE = 'http://localhost:8000/'; */
     </script>
 
