@@ -119,8 +119,8 @@
 
     </div>
     <script>
-      const URLBASE = 'https://appmapy.facitec.edu.py/';
-      /* const URLBASE = 'http://localhost:8000/'; */
+      /* const URLBASE = 'https://appmapy.facitec.edu.py/'; */
+      const URLBASE = 'http://localhost:8000/';
     </script>
 
     <script src="{{url('/js/chart_js_v4.3.0.js')}}"></script>

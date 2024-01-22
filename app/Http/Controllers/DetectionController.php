@@ -188,6 +188,7 @@ class DetectionController extends Controller
    */
   public function store(Request $request)
   {
+    // INFO: validaciones
     $reglas = [
       'detections' => 'present|array',
       'detections.*.id_zona' => 'required|string',
@@ -203,16 +204,36 @@ class DetectionController extends Controller
       ], 400);
     }
 
+    // HACK: Divide la divide la inserciones 
+    // ver: https://www.sqlite.org/limits.html, https://github.com/laravel/framework/issues/50#issue-9976572
     try {
-      Detection::insert($request->input('detections'));
-      return response()->json([
-        'ok' => true,
-        'msg' => 'Se guardaron los datos',
-      ], 200);
+      $detections = $request->input('detections');
+      $rows = count($detections);
+
+      if ($rows > 300) {
+        DB::transaction(function () use ($detections) {
+          $chunk = array_chunk($detections, 300);
+          foreach ($chunk as $dets) {
+            Detection::insert($dets);
+          }
+        });
+
+        return response()->json([
+          'ok' => true,
+          'msg' => 'Se guardaron los datos. Cant. registros: ' . $rows,
+        ], 200);
+      } else {
+        Detection::insert($detections);
+        return response()->json([
+          'ok' => true,
+          'msg' => 'Se guardaron los datos. Cant. registros: ' . $rows,
+        ], 200);
+      }
     } catch (\Throwable $err) {
       return response()->json([
         'ok' => false,
-        'msg' => 'No se pudieron guardar los datos ' . $err->getMessage(),
+        'msg' => 'No se guardaron los datos. Cant. registros: ' . $rows,
+        'error' => $err->getMessage()
       ], 400);
     }
   }
