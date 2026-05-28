@@ -73,34 +73,40 @@ class DetectionController extends Controller
     // error_log(json_encode($req->all()));
 
     $diasLetras = ['DOMINGO', 'LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO'];
-    $fecha = Carbon::createFromDate($req->json('date'));
     try {
+      $fecha = Carbon::parse($req->json('date'));
+
+      $fechaDia        = $fecha->toDateString(); // Y-m-d
+      $fechaInicioMes  = $fecha->copy()->startOfMonth()->toDateTimeString(); // Y-m-m 00:00:00
+      $fechaFinMes     = $fecha->copy()->endOfMonth()->toDateTimeString();   // Y-m-m 23:59:59
+      $fechaInicioAnho = $fecha->copy()->startOfYear()->toDateTimeString();  // Y-01-01 00:00:00
+      $fechaFinAnho    = $fecha->copy()->endOfYear()->toDateTimeString();    // Y-12-31 23:59:59
+
+      // HACK: consulta para sqlite:
+      // SELECT 
+      //   COUNT(CASE WHEN fecha LIKE 'yyyy-mm-dd%' THEN 1 END) as vehicDia,
+      //   COUNT(CASE WHEN fecha BETWEEN 'yyyy-mm-dd 00:00:00' AND 'yyyy-mm-dd 23:59:59' THEN 1 END) as vehicMes,
+      //   COUNT(*) as vehicAnho
+      //   FROM detections 
+      //   WHERE id_zona = 'centro' 
+      //     AND fecha BETWEEN 'yyyy-mm-dd 00:00:00' AND 'yyyy-mm-dd 23:59:59';
+
+      $conteos = Detection::where('id_zona', 'centro')
+        ->whereBetween('fecha', [$fechaInicioAnho, $fechaFinAnho])
+        ->selectRaw("
+            COUNT(CASE WHEN fecha LIKE ? THEN 1 END) as vehicDia,
+            COUNT(CASE WHEN fecha BETWEEN ? AND ? THEN 1 END) as vehicMes,
+            COUNT(*) as vehicAnho
+        ", ["{$fechaDia}%", $fechaInicioMes, $fechaFinMes])
+        ->first();
+
       $data = [
-        // NOTE: Se comenta por el modelo de detección implementado no clasifica los vehículos
-        // "carsDia" => Detection::where('clase', 'car')->whereDate('fecha', $fecha->toDateString())->count(),
-        // "trucksDia" => Detection::where('clase', 'truck')->whereDate('fecha', $fecha->toDateString())->count(),
-        // "carsMes" => Detection::where('clase', 'car')->whereMonth('fecha', $fecha->month)->count(),
-        // "trucksMes" => Detection::where('clase', 'truck')->whereMonth('fecha', $fecha->month) ->count(),
-        // "carsAnho" => Detection::where('clase', 'car') ->whereYear('fecha', $fecha->year) ->count(),
-        // "trucksAnho" => Detection::where('clase', 'truck') ->whereYear('fecha', $fecha->year) ->count(),
-        // HACK: consulta para sqlite:
-        // select count(*) from detections where date(fecha) = date('Y-m-d') and id_zona = 'centro';
-        "vehicDia" => Detection::whereDate('fecha', $fecha->toDateString())
-          ->where('id_zona', 'centro')
-          ->count(),
-        // HACK: consulta para sqlite:
-        // select count(*) from detections where strftime('%m',fecha) = strftime('%m','Y-m-d') and id_zona = 'centro';
-        "vehicMes" => Detection::whereMonth('fecha', $fecha->month)
-          ->where('id_zona', 'centro')
-          ->count(),
-        // HACK: consulta para sqlite:
-        // select count(*) from detections where strftime('%Y',fecha) = strftime('%Y','Y-m-d') and id_zona = 'centro';
-        "vehicAnho" => Detection::whereYear('fecha', $fecha->year)
-          ->where('id_zona', 'centro')
-          ->count(),
-        "mes" => $this->meses[$fecha->month - 1],
-        "dia" => $diasLetras[$fecha->dayOfWeek] . ' ' . $fecha->day,
-        "anho" => $fecha->year,
+        "vehicDia"  => $conteos->vehicDia ?? 0,
+        "vehicMes"  => $conteos->vehicMes ?? 0,
+        "vehicAnho" => $conteos->vehicAnho ?? 0,
+        "mes"       => $this->meses[$fecha->month - 1],
+        "dia"       => $diasLetras[$fecha->dayOfWeek] . ' ' . $fecha->day,
+        "anho"      => $fecha->year,
       ];
       return response()->json([
         'ok' => true,
